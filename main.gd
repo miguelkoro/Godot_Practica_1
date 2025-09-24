@@ -5,6 +5,7 @@ extends Node2D
 @onready var rotator_left: Sprite2D = $rotator_left
 @onready var camera_2d: Camera2D = $Camera2D
 
+@export_group("Propiedades")
 @export var dist_r: float = 50.0
 @export var dist_l: float = 100.0
 @export var speed_r: float = 2.0
