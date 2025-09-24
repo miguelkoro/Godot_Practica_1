@@ -13,17 +13,6 @@ extends Node2D
 var angle: float = 0
 const SCALE: float = 0.25
 
-
-#func _ready() -> void:
-	#var t: Transform2D = Transform2D()
-	
-	#t.x.x=0
-	#t.x.y=2
-	#t.y.x
-	#distance<32pixels=colision (Para la colision si se puede usar el position, para el resto hay que usar el transform)
-	#_process para mirar si hay colision
-	#Camera2D, left, right: puedes usar global_position
-	#rotator srpites: NO puedes usar global_position
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -36,20 +25,9 @@ func viewport_pos_to_world(event_pos: Vector2) -> Vector2:
 	return get_viewport().get_canvas_transform().affine_inverse() * event_pos
 
 func _process(delta: float) -> void:
-	#var t_left = Transform2D()
 	rotator_left.transform = transform_node(Transform2D(), delta, dist_l, speed_l, left)
 	rotator_right.transform = transform_node(Transform2D(), delta, dist_r, speed_r, right)
-		#Traslation
-	#t.origin += left.position+Vector2(150,150)
-	
-	#var t = Transform2D()
-	#t.x *= 2
-	#t.y *= 2
-	#right.transform = t
-	#rotator_left.transform = transform_rotate(delta)
-	#speed_r =+ speed_r * delta
-	
-	
+	detect_colision()
 
 func transform_node(t,delta, dist, speed, node):
 	#Traslation
@@ -65,4 +43,7 @@ func transform_node(t,delta, dist, speed, node):
 	t.x*= SCALE
 	t.y*= SCALE	
 	return t
-	
+
+func detect_colision():
+	if rotator_left.position.distance_to(rotator_right.position) < 32:
+		print("🌍💥🌍 COLISIÓN!")
