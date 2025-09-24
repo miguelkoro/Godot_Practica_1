@@ -5,14 +5,17 @@ extends Node2D
 @onready var rotator_left: Sprite2D = $rotator_left
 @onready var camera_2d: Camera2D = $Camera2D
 
-@export var dist_r: float = 5
-@export var dist_l: float = 10
-@export var speed_r: float = 10
-@export var speed_l:float = 20
+@export var dist_r: float = 50.0
+@export var dist_l: float = 100.0
+@export var speed_r: float = 2.0
+@export var speed_l:float = 5.0
+
+var angle: float = 0
+const SCALE: float = 0.25
 
 
-func _ready() -> void:
-	var t: Transform2D = Transform2D()
+#func _ready() -> void:
+	#var t: Transform2D = Transform2D()
 	
 	#t.x.x=0
 	#t.x.y=2
@@ -33,24 +36,33 @@ func viewport_pos_to_world(event_pos: Vector2) -> Vector2:
 	return get_viewport().get_canvas_transform().affine_inverse() * event_pos
 
 func _process(delta: float) -> void:
-	var t = Transform2D()
+	#var t_left = Transform2D()
+	rotator_left.transform = transform_node(Transform2D(), delta, dist_l, speed_l, left)
+	rotator_right.transform = transform_node(Transform2D(), delta, dist_r, speed_r, right)
 		#Traslation
-	t.origin = left.position+Vector2(20,50)
+	#t.origin += left.position+Vector2(150,150)
+	
 	#var t = Transform2D()
 	#t.x *= 2
 	#t.y *= 2
 	#right.transform = t
 	#rotator_left.transform = transform_rotate(delta)
+	#speed_r =+ speed_r * delta
+	
+	
 
-	var rot =+ 5 * delta
-
-
+func transform_node(t,delta, dist, speed, node):
+	#Traslation
+	var offset = Vector2(cos(angle), sin(angle)) * dist
+	t.origin = node.position + offset
 	#Rotation
-	t.x.x = cos(rot)
-	t.y.y = cos(rot)
-	t.x.y = sin(rot)
-	t.y.x = -sin(rot)
+	angle += speed * delta	
+	t.x.x = cos(angle)
+	t.y.y = cos(angle)
+	t.x.y = sin(angle)
+	t.y.x = -sin(angle)
 	#scale
-	t.x*=0.25
-	t.y*=0.25	
-	rotator_left.transform = t
+	t.x*= SCALE
+	t.y*= SCALE	
+	return t
+	
