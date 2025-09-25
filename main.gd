@@ -27,36 +27,27 @@ func viewport_pos_to_world(event_pos: Vector2) -> Vector2:
 	return get_viewport().get_canvas_transform().affine_inverse() * event_pos
 
 func _process(delta: float) -> void:
-	rotator_left.transform = transform_node(delta, dist_l, speed_l, left, "left")
-	rotator_right.transform = transform_node(delta, dist_r, speed_r, right, "right")
+	angle_l = transform_node(delta, dist_l, speed_l, left, rotator_left, angle_l)
+	angle_r = transform_node(delta, dist_r, speed_r, right, rotator_right, angle_r)
 	detect_colision()
 
-func transform_node(delta, dist, speed, node, type) -> Transform2D:	
+func transform_node(delta, dist, speed, node, rotator, angle):	
 	var t = Transform2D()
-	if(type=="left"): #Debo separarlo porque el angle es una variable global
-		#Traslation
-		var distance = Vector2(cos(angle_l), sin(angle_l)) * dist
-		t.origin = node.position + distance
-		#Rotation
-		angle_l += speed * delta	
-		t.x.x = cos(angle_l)
-		t.y.y = cos(angle_l)
-		t.x.y = sin(angle_l)
-		t.y.x = -sin(angle_l)
-	elif(type=="right"):
-		#Traslation
-		var distance = Vector2(cos(angle_r), sin(angle_r)) * dist
-		t.origin = node.position + distance
-		#Rotation
-		angle_r += speed * delta	
-		t.x.x = cos(angle_r)
-		t.y.y = cos(angle_r)
-		t.x.y = sin(angle_r)
-		t.y.x = -sin(angle_r)
+	#Transform
+	var distance = Vector2(cos(angle), sin(angle)) * dist
+	t.origin = node.position + distance
+	#Rotation
+	angle += speed * delta	
+	t.x.x = cos(angle)
+	t.y.y = cos(angle)
+	t.x.y = sin(angle)
+	t.y.x = -sin(angle)
 	#scale
 	t.x*= SCALE
 	t.y*= SCALE	
-	return t
+	
+	rotator.transform = t
+	return angle
 
 
 func detect_colision():
