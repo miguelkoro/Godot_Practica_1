@@ -8,10 +8,11 @@ extends Node2D
 @export_group("Propiedades")
 @export var dist_r: float = 50.0
 @export var dist_l: float = 100.0
-@export var speed_r: float = 2.0
-@export var speed_l:float = 5.0
+@export var speed_r: float = 1
+@export var speed_l:float = 7.0
 
-var angle: float = 0
+var angle_l: float = 0
+var angle_r: float = 0
 const SCALE: float = 0.25
 
 func _input(event: InputEvent) -> void:
@@ -26,24 +27,37 @@ func viewport_pos_to_world(event_pos: Vector2) -> Vector2:
 	return get_viewport().get_canvas_transform().affine_inverse() * event_pos
 
 func _process(delta: float) -> void:
-	rotator_left.transform = transform_node(Transform2D(), delta, dist_l, speed_l, left)
-	rotator_right.transform = transform_node(Transform2D(), delta, dist_r, speed_r, right)
+	rotator_left.transform = transform_node(delta, dist_l, speed_l, left, "left")
+	rotator_right.transform = transform_node(delta, dist_r, speed_r, right, "right")
 	detect_colision()
 
-func transform_node(t,delta, dist, speed, node):
-	#Traslation
-	var offset = Vector2(cos(angle), sin(angle)) * dist
-	t.origin = node.position + offset
-	#Rotation
-	angle += speed * delta	
-	t.x.x = cos(angle)
-	t.y.y = cos(angle)
-	t.x.y = sin(angle)
-	t.y.x = -sin(angle)
+func transform_node(delta, dist, speed, node, type) -> Transform2D:	
+	var t = Transform2D()
+	if(type=="left"): #Debo separarlo porque el angle es una variable global
+		#Traslation
+		var distance = Vector2(cos(angle_l), sin(angle_l)) * dist
+		t.origin = node.position + distance
+		#Rotation
+		angle_l += speed * delta	
+		t.x.x = cos(angle_l)
+		t.y.y = cos(angle_l)
+		t.x.y = sin(angle_l)
+		t.y.x = -sin(angle_l)
+	elif(type=="right"):
+		#Traslation
+		var distance = Vector2(cos(angle_r), sin(angle_r)) * dist
+		t.origin = node.position + distance
+		#Rotation
+		angle_r += speed * delta	
+		t.x.x = cos(angle_r)
+		t.y.y = cos(angle_r)
+		t.x.y = sin(angle_r)
+		t.y.x = -sin(angle_r)
 	#scale
 	t.x*= SCALE
 	t.y*= SCALE	
 	return t
+
 
 func detect_colision():
 	if rotator_left.position.distance_to(rotator_right.position) < 32:
